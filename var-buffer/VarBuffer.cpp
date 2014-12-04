@@ -7,30 +7,23 @@
 namespace CPM_VAR_BUFFER_NS {
 
 VarBuffer::VarBuffer() :
-    mBuffer(nullptr),
-    mBufferSize(0)
+mBuffer(1024),
+    mBufferSize(1024)
 {
-  mBuffer = static_cast<char*>(std::malloc(1024));
-  mBufferSize = 1024;
-
   mSerializer = std::unique_ptr<CPM_BSERIALIZE_NS::BSerialize>(
-      new CPM_BSERIALIZE_NS::BSerialize(mBuffer, mBufferSize));
+    new CPM_BSERIALIZE_NS::BSerialize(getBuffer(), mBufferSize));
 }
 
 VarBuffer::VarBuffer(uint32_t size) :
-    mBuffer(nullptr),
-    mBufferSize(0)
+mBuffer(size),
+mBufferSize(size)
 {
-  mBuffer = static_cast<char*>(std::malloc(size));
-  mBufferSize = size;
-
   mSerializer = std::unique_ptr<CPM_BSERIALIZE_NS::BSerialize>(
-      new CPM_BSERIALIZE_NS::BSerialize(mBuffer, mBufferSize));
+    new CPM_BSERIALIZE_NS::BSerialize(getBuffer(), mBufferSize));
 }
 
 VarBuffer::~VarBuffer()
 {
-  std::free(mBuffer);
 }
 
 void VarBuffer::clear()
@@ -66,8 +59,8 @@ void VarBuffer::writeNullTermString(const char* str)
 
 void VarBuffer::resize()
 {
-  mBufferSize += 1024;
-  mBuffer = static_cast<char*>(std::realloc(mBuffer, mBufferSize));
+  mBufferSize *= 2;
+  mBuffer.resize(mBufferSize);
 
   // Record offset before we destroy and recreate the serializer.
   size_t bufferOffset = mSerializer->getOffset();
@@ -75,7 +68,7 @@ void VarBuffer::resize()
 
   // Create a new serializer and reset its offset.
   mSerializer = std::unique_ptr<CPM_BSERIALIZE_NS::BSerialize>(
-      new CPM_BSERIALIZE_NS::BSerialize(mBuffer, mBufferSize));
+      new CPM_BSERIALIZE_NS::BSerialize(getBuffer(), mBufferSize));
   mSerializer->setOffset(bufferOffset);
 }
 

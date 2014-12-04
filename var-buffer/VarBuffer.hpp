@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <vector>
 #include <bserialize/BSerialize.hpp>
 
 namespace CPM_VAR_BUFFER_NS {
@@ -45,7 +46,7 @@ public:
   void clear();
 
   /// Retrieves raw buffer contents.
-  char* getBuffer()         {return mBuffer;}
+  char* getBuffer()         {return mBuffer.empty() ? 0 : &mBuffer[0];}
 
   /// Retrieves the current size of the buffer (size of all data currently
   /// written to the buffer).
@@ -63,7 +64,7 @@ private:
   static bool serializeUInt16(char* msg, int msgLen, int* offset_out, uint16_t in);
   static uint16_t deserializeUInt16(const char* msg, int msgLen, int* offset_out);
 
-  char*   mBuffer;      ///< Pointer to our allocated buffer.
+  std::vector<char>   mBuffer;      ///< buffer
   int     mBufferSize;  ///< Absolute size of mBuffer in bytes.
 
   std::unique_ptr<CPM_BSERIALIZE_NS::BSerialize> mSerializer;
