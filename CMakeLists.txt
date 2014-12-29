@@ -36,7 +36,7 @@ endif()
 # ++ MODULE: bserialize library (primarily for loading fonts).
 CPM_AddModule("bserialize"
   GIT_REPOSITORY "https://github.com/CIBC-Internal/cpm-bserialize"
-  GIT_TAG "origin/master"
+  GIT_TAG "origin/SCIRun"
   EXPORT_MODULE TRUE)
 
 # This call will ensure all include directories and definitions are present
